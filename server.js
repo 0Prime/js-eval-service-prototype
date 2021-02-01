@@ -1,21 +1,41 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 'use strict';
 
-const express = require('express');
+const express = require('express')
+const bodyParser = require('body-parser')
+const atob = require('atob')
+const fetch = require('node-fetch')
 
 // Constants
 const PORT = 3000;
-const HOST = '0.0.0.0';
+const HOST = '0.0.0.0'
 
-// App
-const app = express();
-app.get('/', (req, res) => {
-	res.send('Hello remote world!\n');
-});
+const app = express()
+app.use(bodyParser.json())
 
-app.listen(PORT, HOST);
-console.log(`Running on http://${HOST}:${PORT}`);
+
+app.get('/', (req, res) =>
+	res.send('Hello remote world!\n'));
+
+
+app.post('/eval', (req, res) => {
+	const script = atob(req.body.script)
+
+	try {
+		const result = eval(script)
+		console.log('result:')
+		console.log(result)
+
+		if (result.then)
+			result.then(r => res.json({ result: r }))
+		else
+			res.json({ result: result })
+	}
+	catch (err) {
+		console.log(err)
+		res.json({ error: err })
+	}
+})
+
+
+app.listen(PORT, HOST)
+console.log(`Running on http://${HOST}:${PORT}`)
