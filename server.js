@@ -1,11 +1,13 @@
+/* eslint-disable semi */
 'use strict';
 
 const express = require('express')
 const bodyParser = require('body-parser')
 const atob = require('atob')
+// used implicitly in js evaluation
+// eslint-disable-next-line no-unused-vars
 const fetch = require('node-fetch')
 
-// Constants
 const PORT = 3000;
 const HOST = '0.0.0.0'
 
@@ -13,8 +15,8 @@ const app = express()
 app.use(bodyParser.json())
 
 
-app.get('/', (req, res) =>
-	res.send('Hello remote world!\n'));
+app.get('/', (_req, res) =>
+	res.send('Hello remote world!\n'))
 
 
 app.post('/eval', (req, res) => {
@@ -22,8 +24,6 @@ app.post('/eval', (req, res) => {
 
 	try {
 		const result = eval(script)
-		console.log('result:')
-		console.log(result)
 
 		if (result.then)
 			result.then(r => res.json({ result: r }))
